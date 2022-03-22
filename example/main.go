@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"dex"
 	"fmt"
+	"github.com/eavesmy/dex"
 )
 
 func main() {

@@ -2,9 +2,9 @@ package net
 
 import (
 	"context"
-	"dex/schema"
 	"encoding/json"
 	"github.com/aurora-is-near/near-api-go"
+	"github.com/eavesmy/dex/schema"
 	"math/big"
 )
 

@@ -2,8 +2,8 @@ package net
 
 import (
 	"context"
-	"dex/schema"
-	"dex/utils"
+	"github.com/eavesmy/dex/schema"
+	"github.com/eavesmy/dex/utils"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"

@@ -2,8 +2,8 @@ package dex
 
 import (
 	"context"
-	"dex/net"
 	"fmt"
+	"github.com/eavesmy/dex/net"
 )
 
 type Near struct {

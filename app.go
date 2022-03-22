@@ -2,7 +2,7 @@ package dex
 
 import (
 	"context"
-	"dex/schema"
+	"github.com/eavesmy/dex/schema"
 	"math/big"
 )
 
