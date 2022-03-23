@@ -53,3 +53,6 @@ func (n *Near) NetworkID() (id string, err error) {
 func (n *Near) GetTransaction(txHash string) (transaction *schema.Transaction, err error) {
 	return
 }
+func (e *Near) Call(to, method string, params ...interface{}) map[string]interface{} {
+	return nil
+}

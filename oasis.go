@@ -6,19 +6,18 @@ import (
 	"github.com/eavesmy/dex/net"
 )
 
+var OASIS_RPC_ADDR = "https://emerald.oasis.dev/"
+
 type Oasis struct {
 	*Client
 }
 
-func (o *Oasis) Init(ctx context.Context) (oasis *Oasis, err error) {
-	o.Client = &Client{
+func (node *Oasis) Init(ctx context.Context) (oasis *Oasis, err error) {
+	node.Client = &Client{
 		ctx: ctx,
 	}
-	o.Client.core, err = new(net.Eth).Init(ctx, "ws://54.65.82.217:9944")
-	// o.Client.core, err = new(net.Eth).Init(ctx, "https://emerald.oasis.dev/")
-
-	oasis = o
-
+	node.Client.core, err = new(net.Eth).Init(ctx, OASIS_RPC_ADDR)
 	fmt.Println("Oasis core init.")
+	oasis = node
 	return
 }
