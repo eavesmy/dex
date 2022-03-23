@@ -6,16 +6,21 @@ import (
 	"github.com/eavesmy/dex/net"
 )
 
+var BSC_RPC_ADDR = "https://emerald.oasis.dev/"
+
 type Bsc struct {
 	*Client
-	core *net.Eth
+	RpcAddr string
 }
 
-func (bsc *Bsc) Init(ctx context.Context) (b *Bsc, err error) {
-	bsc.Client = &Client{
+func (node *Bsc) Init(ctx context.Context) (eth *Bsc, err error) {
+
+	node.Client = &Client{
 		ctx: ctx,
 	}
-	bsc.Client.core, err = new(net.Eth).Init(ctx, "https://bsc-dataseed3.binance.org/")
+
+	node.Client.core, err = new(net.Eth).Init(ctx, BSC_RPC_ADDR)
 	fmt.Println("Bsc core init.")
-	return bsc, err
+	eth = node
+	return eth, err
 }

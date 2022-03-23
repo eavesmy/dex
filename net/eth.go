@@ -50,9 +50,14 @@ func (e *Eth) GetBalanceOf(addr, contractAddr string) (balance *big.Int, err err
 	}
 
 	method := "balanceOf(address)"
-	msg := e.callContract(contractAddr, method, addr)
+	msg := e.Call(contractAddr, method, addr)
 
-	data, err := e.client.CallContract(e.Ctx, msg, big.NewInt(int64(num)))
+	callMsg := ethereum.CallMsg{
+		To:   msg["To"].(*common.Address),
+		Data: msg["Data"].([]byte),
+	}
+
+	data, err := e.client.CallContract(e.Ctx, callMsg, big.NewInt(int64(num)))
 
 	if err != nil {
 		return
@@ -100,7 +105,7 @@ func (e *Eth) GetTransactionCount(blockHash string) (count int, err error) {
 	return
 }
 
-func (e *Eth) callContract(to, method string, params ...interface{}) ethereum.CallMsg {
+func (e *Eth) Call(to, method string, params ...interface{}) map[string]interface{} {
 
 	hex_to := common.HexToAddress(to)
 	data := []byte{}
@@ -121,8 +126,5 @@ func (e *Eth) callContract(to, method string, params ...interface{}) ethereum.Ca
 		}
 	}
 
-	return ethereum.CallMsg{
-		To:   &hex_to,
-		Data: data,
-	}
+	return map[string]interface{}{"To": &hex_to, "Data": data}
 }

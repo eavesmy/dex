@@ -12,6 +12,7 @@ type ChainNet interface {
 	GetBalanceOf(string, string) (*big.Int, error)
 	NetworkID() (string, error)
 	GetTransaction(string) (*schema.Transaction, error)
+	Call(string, string, ...interface{}) map[string]interface{}
 }
 
 type Client struct {
