@@ -2,6 +2,7 @@ package schema
 
 import (
 	"math/big"
+	"time"
 )
 
 type Transaction struct {
@@ -25,4 +26,6 @@ type Transaction struct {
 	Nonce uint64
 
 	IsPending bool
+
+	CreatedAt time.Time
 }

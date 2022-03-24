@@ -14,6 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"golang.org/x/crypto/sha3"
 	"math/big"
+	"time"
 )
 
 type Eth struct {
@@ -289,6 +290,8 @@ func (e *Eth) SendTransaction(transaction *schema.Transaction, privateKey string
 	signedTx, err := types.SignTx(types.NewTx(tx), types.NewEIP155Signer(chainID), priKey)
 
 	transaction.Hash = signedTx.Hash().Hex()
+	transaction.IsPending = true
+	transaction.CreatedAt = time.Now()
 
 	return transaction, e.client.SendTransaction(e.Ctx, signedTx)
 }
