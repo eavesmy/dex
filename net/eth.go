@@ -156,8 +156,6 @@ func (e *Eth) NetworkID() (chainID *big.Int, err error) {
 // GetPastLogs not implemented
 func (e *Eth) GetPastLogs(query schema.LogQuery) (logs []*schema.Log, err error) {
 
-	filter := e.logQuery2FilterQuery(query)
-
 	ls, err := e.client.FilterLogs(e.Ctx, e.logQuery2FilterQuery(query))
 	if err != nil {
 		return
