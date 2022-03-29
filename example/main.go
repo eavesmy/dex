@@ -29,7 +29,7 @@ func main() {
 	fmt.Printf("block: %+v \n", block.Hash)
 	fmt.Println("block size: ", block.Size, block.BaseFeeGas)
 
-	if _, err = c.GetPastLogs(schema.LogQuery{FromBlock: block.Number - 1, ToBlock: block.Number}); err != nil {
+	if _, err = c.GetPastLogs(schema.LogQuery{FromBlock: 773609, ToBlock: 773609}); err != nil {
 		fmt.Println("logs error:", err)
 	}
 
