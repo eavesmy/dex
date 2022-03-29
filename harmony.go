@@ -13,7 +13,7 @@ type Harmony struct {
 	RpcAddr string
 }
 
-func (node *Harmony) Init(ctx context.Context, rpcAddrs ...string) (eth Chain, err error) {
+func (node *Harmony) Init(ctx context.Context, rpcAddrs ...string) (harmony Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}
