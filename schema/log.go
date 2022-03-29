@@ -5,7 +5,7 @@ type LogQuery struct {
 	FromBlock uint64
 	ToBlock   uint64
 	Addresses []string
-	Topics    []string
+	Topics    [][]string
 }
 
 type Log struct {

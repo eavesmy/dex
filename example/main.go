@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/eavesmy/dex"
+	"github.com/eavesmy/dex/schema"
 )
 
 func main() {
@@ -12,27 +13,28 @@ func main() {
 	ctx := context.Background()
 
 	var c dex.Chain
+	var err error
 
 	// Init eth client.
-	c, _ = new(dex.Eth).Init(ctx)
-	// Get last block number.
-	num, err := c.BlockNumber()
-	fmt.Println(num, err)
 
 	// Set bsc rpc address.
 	// Of course you can set ws/wss protocal here.
-	dex.BSC_RPC_ADDR = "https://bsc-dataseed2.binance.org/"
-	bsc, _ := new(dex.Bsc).Init(ctx)
+	// dex.BSC_RPC_ADDR = "https://bsc-dataseed2.binance.org/"
+	c, _ = new(dex.Oasis).Init(ctx)
 
-	num, _ = bsc.BlockNumber()
+	num, _ := c.BlockNumber()
 	fmt.Println("lastest block number: ", num)
 
-	block, _ := bsc.GetBlockByNumber(num)
-	fmt.Printf("block: %+v \n", block.Hash)
-
-	block, _ = bsc.GetBlockByHash(block.Hash)
+	block, _ := c.GetBlockByNumber(num)
 	fmt.Printf("block: %+v \n", block.Hash)
 	fmt.Println("block size: ", block.Size, block.BaseFeeGas)
+
+	if _, err = c.GetPastLogs(schema.LogQuery{FromBlock: block.Number - 1, ToBlock: block.Number}); err != nil {
+		fmt.Println("logs error:", err)
+	}
+
+	block, err = c.GetBlockByHash(block.Hash)
+	fmt.Printf("block: %+v error: %s \n ", block, err.Error())
 
 	// logs, _ := bsc.GetPastLogs(schema.LogQuery{BlockHash: block.Hash})
 	// fmt.Println(len(logs), logs[0])

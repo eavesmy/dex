@@ -9,4 +9,5 @@ var (
 	InvalidPrivateKey  = errors.New("Invalid private key")
 	ParamToRequired    = errors.New("Param to required")
 	ParamValueRequired = errors.New("Param value required")
+	NotSupported       = errors.New("Not supported")
 )

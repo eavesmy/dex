@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/eavesmy/dex/enums"
 	"github.com/eavesmy/dex/schema"
 	"github.com/eavesmy/dex/utils"
 	"github.com/ethereum/go-ethereum"
@@ -43,7 +42,6 @@ func (c *Eth) WalletCreate() (wallet *schema.Wallet, err error) {
 
 	privateKey, err := crypto.GenerateKey()
 	if err != nil {
-		err = enums.CreateWalletError
 		return
 	}
 
@@ -100,7 +98,6 @@ func (e *Eth) GetBlockByNumber(blockNumber uint64) (block *schema.Block, err err
 	number := new(big.Int).SetUint64(blockNumber)
 	ori, err := e.client.BlockByNumber(e.Ctx, number)
 	if err != nil {
-		err = enums.RequestFailed
 		return
 	}
 	block = e.Block2Schema(ori)
@@ -111,7 +108,6 @@ func (e *Eth) GetBlockByHash(blockHash string) (block *schema.Block, err error) 
 	hash := common.HexToHash(blockHash)
 	ori, err := e.client.BlockByHash(e.Ctx, hash)
 	if err != nil {
-		err = enums.RequestFailed
 		return
 	}
 	block = e.Block2Schema(ori)
@@ -159,9 +155,11 @@ func (e *Eth) NetworkID() (chainID *big.Int, err error) {
 
 // GetPastLogs not implemented
 func (e *Eth) GetPastLogs(query schema.LogQuery) (logs []*schema.Log, err error) {
+
+	filter := e.logQuery2FilterQuery(query)
+
 	ls, err := e.client.FilterLogs(e.Ctx, e.logQuery2FilterQuery(query))
 	if err != nil {
-		err = enums.RequestFailed
 		return
 	}
 
@@ -188,39 +186,51 @@ func (e *Eth) GetPastLogs(query schema.LogQuery) (logs []*schema.Log, err error)
 }
 
 func (e *Eth) logQuery2FilterQuery(query schema.LogQuery) ethereum.FilterQuery {
+
 	var blockHash common.Hash
 	var fromBlock *big.Int
 	var toBlock *big.Int
 	var addresss []common.Address
 	var topics [][]common.Hash
 
+	filter := ethereum.FilterQuery{}
+
 	if query.BlockHash != "" {
 		blockHash = common.HexToHash(query.BlockHash)
+		filter.BlockHash = &blockHash
 	}
 	if query.FromBlock != 0 {
 		fromBlock = new(big.Int).SetUint64(query.FromBlock)
+		filter.FromBlock = fromBlock
 	}
 	if query.ToBlock != 0 {
 		toBlock = new(big.Int).SetUint64(query.ToBlock)
+		filter.ToBlock = toBlock
 	}
 	if len(query.Addresses) > 0 {
 		addresss = []common.Address{}
 		for _, addr := range query.Addresses {
 			addresss = append(addresss, common.HexToAddress(addr))
 		}
+		filter.Addresses = addresss
 	}
 
 	if len(query.Topics) > 0 {
 
+		topics = [][]common.Hash{}
+
+		for _, a1 := range query.Topics {
+			arr := []common.Hash{}
+			for _, a2 := range a1 {
+				arr = append(arr, common.HexToHash(a2))
+			}
+			topics = append(topics, arr)
+		}
+
+		filter.Topics = topics
 	}
 
-	return ethereum.FilterQuery{
-		BlockHash: &blockHash,
-		FromBlock: fromBlock,
-		ToBlock:   toBlock,
-		Addresses: addresss,
-		Topics:    topics,
-	}
+	return filter
 }
 
 func (e *Eth) GetTransaction(txHash string) (transaction *schema.Transaction, err error) {
@@ -310,7 +320,6 @@ func (e *Eth) SendTransaction(transaction *schema.Transaction, privateKey string
 	// to
 	var to common.Address
 	if transaction.To == "" {
-		err = enums.ParamToRequired
 		return
 	}
 	to = common.HexToAddress(transaction.To)
@@ -318,7 +327,6 @@ func (e *Eth) SendTransaction(transaction *schema.Transaction, privateKey string
 	// value
 	var value *big.Int
 	if transaction.Value == nil {
-		err = enums.ParamValueRequired
 		return
 	}
 	value = transaction.Value
@@ -326,13 +334,11 @@ func (e *Eth) SendTransaction(transaction *schema.Transaction, privateKey string
 	// privateKey
 	var priKey *ecdsa.PrivateKey
 	if privateKey == "" {
-		err = enums.PrivateKeyRequired
 		return
 	}
 
 	var wallet *schema.Wallet
 	if wallet, err = e.WalletCreateByPrivateKey(privateKey); err != nil {
-		err = enums.InvalidPrivateKey
 		return
 	}
 	priKey, _ = crypto.HexToECDSA(wallet.PrivateKey)
@@ -342,7 +348,6 @@ func (e *Eth) SendTransaction(transaction *schema.Transaction, privateKey string
 	var chainID = e.chainID
 	if chainID == nil {
 		if chainID, err = e.NetworkID(); err != nil {
-			err = enums.RequestFailed
 			return
 		}
 	}
@@ -352,7 +357,6 @@ func (e *Eth) SendTransaction(transaction *schema.Transaction, privateKey string
 	var nonce uint64
 	if transaction.Nonce == 0 {
 		if nonce, err = e.Nonce(transaction.From); err != nil {
-			err = enums.RequestFailed
 			return
 		}
 		transaction.Nonce = nonce
@@ -370,7 +374,6 @@ func (e *Eth) SendTransaction(transaction *schema.Transaction, privateKey string
 	var gasPrice *big.Int
 	if transaction.GasPrice == nil {
 		if gasPrice, err = e.GetGasPrice(); err != nil {
-			err = enums.RequestFailed
 			return
 		}
 		transaction.GasPrice = gasPrice
