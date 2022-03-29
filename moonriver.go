@@ -13,7 +13,7 @@ type Moonriver struct {
 	RpcAddr string
 }
 
-func (node *Moonriver) Init(ctx context.Context) (moonriver *Moonriver, err error) {
+func (node *Moonriver) Init(ctx context.Context) (moonriver Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}

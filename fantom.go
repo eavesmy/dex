@@ -13,7 +13,7 @@ type Fantom struct {
 	RpcAddr string
 }
 
-func (node *Fantom) Init(ctx context.Context) (fantom *Fantom, err error) {
+func (node *Fantom) Init(ctx context.Context) (fantom Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}

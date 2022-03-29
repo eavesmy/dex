@@ -3,19 +3,22 @@ package main
 import (
 	"context"
 	"fmt"
+	"math/big"
+
 	"github.com/eavesmy/dex"
 	"github.com/eavesmy/dex/schema"
-	"math/big"
 )
 
 func main() {
 
 	ctx := context.Background()
 
+	var c dex.Chain
+
 	// Init eth client.
-	eth, _ := new(dex.Eth).Init(ctx)
+	c, _ = new(dex.Eth).Init(ctx)
 	// Get last block number.
-	num, err := eth.BlockNumber()
+	num, err := c.BlockNumber()
 	fmt.Println(num, err)
 
 	// Set bsc rpc address.

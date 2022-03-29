@@ -13,7 +13,7 @@ type Moonbeam struct {
 	RpcAddr string
 }
 
-func (node *Moonbeam) Init(ctx context.Context) (moonbeam *Moonbeam, err error) {
+func (node *Moonbeam) Init(ctx context.Context) (moonbeam Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}

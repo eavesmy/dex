@@ -13,7 +13,7 @@ type Klaytn struct {
 	RpcAddr string
 }
 
-func (node *Klaytn) Init(ctx context.Context) (klaytn *Klaytn, err error) {
+func (node *Klaytn) Init(ctx context.Context) (klaytn Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}

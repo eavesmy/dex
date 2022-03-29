@@ -2,10 +2,12 @@ package dex
 
 import (
 	"context"
-	"github.com/eavesmy/dex/schema"
 	"math/big"
+
+	"github.com/eavesmy/dex/schema"
 )
 
+// TransferOption not implemented.
 type TransferOption struct {
 }
 

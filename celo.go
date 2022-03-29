@@ -13,7 +13,7 @@ type Celo struct {
 	RpcAddr string
 }
 
-func (node *Celo) Init(ctx context.Context) (celo *Celo, err error) {
+func (node *Celo) Init(ctx context.Context) (celo Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}

@@ -12,7 +12,7 @@ type Oasis struct {
 	*Client
 }
 
-func (node *Oasis) Init(ctx context.Context) (oasis *Oasis, err error) {
+func (node *Oasis) Init(ctx context.Context) (oasis Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}

@@ -13,7 +13,7 @@ type Aurora struct {
 	RpcAddr string
 }
 
-func (node *Aurora) Init(ctx context.Context) (aurora *Aurora, err error) {
+func (node *Aurora) Init(ctx context.Context) (aurora Chain, err error) {
 
 	if AURORA_RPC_ADDR == "" {
 		panic("Variable 'AURORA_RPC_ADDR' required")

@@ -3,6 +3,10 @@ package net
 import (
 	"context"
 	"crypto/ecdsa"
+	"math/big"
+	"sync"
+	"time"
+
 	"github.com/eavesmy/dex/enums"
 	"github.com/eavesmy/dex/schema"
 	"github.com/eavesmy/dex/utils"
@@ -13,9 +17,6 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"golang.org/x/crypto/sha3"
-	"math/big"
-	"sync"
-	"time"
 )
 
 type Eth struct {

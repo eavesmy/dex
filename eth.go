@@ -13,7 +13,7 @@ type Eth struct {
 	RpcAddr string
 }
 
-func (node *Eth) Init(ctx context.Context) (eth *Eth, err error) {
+func (node *Eth) Init(ctx context.Context) (eth Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}

@@ -13,7 +13,7 @@ type Astar struct {
 	RpcAddr string
 }
 
-func (node *Astar) Init(ctx context.Context) (astar *Astar, err error) {
+func (node *Astar) Init(ctx context.Context) (astar Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}
