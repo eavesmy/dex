@@ -3,10 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"math/big"
 
 	"github.com/eavesmy/dex"
-	"github.com/eavesmy/dex/schema"
 )
 
 func main() {
@@ -26,10 +24,23 @@ func main() {
 	dex.BSC_RPC_ADDR = "https://bsc-dataseed2.binance.org/"
 	bsc, _ := new(dex.Bsc).Init(ctx)
 
-	// Create a new account from bsc.
-	wallet, _ := bsc.WalletCreate()
+	num, _ = bsc.BlockNumber()
+	fmt.Println("lastest block number: ", num)
 
-	// Set privateKey and send transaction to self.
-	tx, err := bsc.SetPrivateKey(wallet.PrivateKey).SendTransaction(&schema.Transaction{To: wallet.Address, Value: new(big.Int).SetUint64(23937000000000)})
-	fmt.Println(tx, err)
+	block, _ := bsc.GetBlockByNumber(num)
+	fmt.Printf("block: %+v \n", block.Hash)
+
+	block, _ = bsc.GetBlockByHash(block.Hash)
+	fmt.Printf("block: %+v \n", block.Hash)
+	fmt.Println("block size: ", block.Size, block.BaseFeeGas)
+
+	// logs, _ := bsc.GetPastLogs(schema.LogQuery{BlockHash: block.Hash})
+	// fmt.Println(len(logs), logs[0])
+
+	// Create a new account from bsc.
+	//wallet, _ := bsc.WalletCreate()
+
+	//// Set privateKey and send transaction to self.
+	//tx, err := bsc.SetPrivateKey(wallet.PrivateKey).SendTransaction(&schema.Transaction{To: wallet.Address, Value: new(big.Int).SetUint64(23937000000000)})
+	//fmt.Println(tx, err)
 }

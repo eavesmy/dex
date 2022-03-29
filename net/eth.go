@@ -96,6 +96,28 @@ func (e *Eth) BlockNumber() (uint64, error) {
 	return e.client.BlockNumber(e.Ctx)
 }
 
+func (e *Eth) GetBlockByNumber(blockNumber uint64) (block *schema.Block, err error) {
+	number := new(big.Int).SetUint64(blockNumber)
+	ori, err := e.client.BlockByNumber(e.Ctx, number)
+	if err != nil {
+		err = enums.RequestFailed
+		return
+	}
+	block = e.Block2Schema(ori)
+	return
+}
+
+func (e *Eth) GetBlockByHash(blockHash string) (block *schema.Block, err error) {
+	hash := common.HexToHash(blockHash)
+	ori, err := e.client.BlockByHash(e.Ctx, hash)
+	if err != nil {
+		err = enums.RequestFailed
+		return
+	}
+	block = e.Block2Schema(ori)
+	return
+}
+
 func (e *Eth) GetBalance(addr string) (balance *big.Int, err error) {
 	num, err := e.BlockNumber()
 	if err != nil {
@@ -144,13 +166,13 @@ func (e *Eth) GetPastLogs(query schema.LogQuery) (logs []*schema.Log, err error)
 	}
 
 	logs = make([]*schema.Log, len(ls))
-	for _, item := range ls {
+	for i, item := range ls {
 
 		topics := make([]string, len(item.Topics))
-		for _, topic := range item.Topics {
-			topics = append(topics, topic.Hex())
+		for j, topic := range item.Topics {
+			topics[j] = topic.Hex()
 		}
-		logs = append(logs, &schema.Log{
+		logs[i] = &schema.Log{
 			Address:     item.Address.Hex(),
 			Topics:      topics,
 			Data:        item.Data,
@@ -160,7 +182,7 @@ func (e *Eth) GetPastLogs(query schema.LogQuery) (logs []*schema.Log, err error)
 			TxHash:      item.TxHash.Hex(),
 			TxIndex:     item.TxIndex,
 			Removed:     item.Removed,
-		})
+		}
 	}
 	return
 }
@@ -385,15 +407,47 @@ func (e *Eth) Transaction2Schema(tx *types.Transaction, isPendings ...bool) *sch
 	if len(isPendings) > 0 {
 		isPending = isPendings[0]
 	}
+	var to string
+	if tx.To() != nil {
+		to = tx.To().Hex()
+	}
 	return &schema.Transaction{
 		Hash:      tx.Hash().Hex(),
 		ChainId:   tx.ChainId(),
-		To:        tx.To().Hex(),
+		To:        to,
 		Gas:       tx.Gas(),
 		GasPrice:  tx.GasPrice(),
 		Cost:      tx.Cost(),
 		Data:      tx.Data(),
 		Nonce:     tx.Nonce(),
 		IsPending: isPending,
+	}
+}
+
+func (e *Eth) Block2Schema(block *types.Block) *schema.Block {
+	txs := make([]*schema.Transaction, len(block.Transactions()))
+	for i, tx := range block.Transactions() {
+		txs[i] = e.Transaction2Schema(tx)
+	}
+
+	var baseFeeGas uint64
+	if block.BaseFee() != nil {
+		baseFeeGas = block.BaseFee().Uint64()
+	}
+	return &schema.Block{
+		Uncle:        block.UncleHash().Hex(),
+		Parent:       block.ParentHash().Hex(),
+		Hash:         block.Hash().Hex(),
+		Number:       block.NumberU64(),
+		Nonce:        block.Nonce(),
+		Transactions: txs,
+		ReceiveAt:    block.ReceivedAt,
+		Time:         block.Time(),
+		Difficulty:   block.Difficulty().Uint64(),
+		Size:         block.Size().String(),
+		GasUsed:      block.GasUsed(),
+		GasLimit:     block.GasLimit(),
+		BaseFeeGas:   baseFeeGas,
+		ExtraData:    block.Header().Extra,
 	}
 }

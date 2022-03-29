@@ -6,7 +6,7 @@ import (
 	"github.com/eavesmy/dex/net"
 )
 
-var AURORA_RPC_ADDR = ""
+var AURORA_RPC_ADDR = "https://mainnet.aurora.dev"
 
 type Aurora struct {
 	*Client
@@ -14,10 +14,6 @@ type Aurora struct {
 }
 
 func (node *Aurora) Init(ctx context.Context, rpcAddrs ...string) (aurora Chain, err error) {
-
-	if AURORA_RPC_ADDR == "" {
-		panic("Variable 'AURORA_RPC_ADDR' required")
-	}
 
 	node.Client = &Client{
 		ctx: ctx,

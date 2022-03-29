@@ -17,6 +17,8 @@ type Chain interface {
 	WalletCreate() (*schema.Wallet, error)
 	BlockNumber() (uint64, error)
 	GetBalance(string) (*big.Int, error)
+	GetBlockByNumber(uint64) (*schema.Block, error)
+	GetBlockByHash(string) (*schema.Block, error)
 	// GetBalanceOf Query token balance.
 	GetBalanceOf(string, string) (*big.Int, error)
 	NetworkID() (*big.Int, error)
@@ -34,6 +36,8 @@ type Chain interface {
 type ChainNet interface {
 	WalletCreate() (*schema.Wallet, error)
 	BlockNumber() (uint64, error)
+	GetBlockByNumber(uint64) (*schema.Block, error)
+	GetBlockByHash(string) (*schema.Block, error)
 	GetBalance(string) (*big.Int, error)
 	GetBalanceOf(string, string) (*big.Int, error)
 	NetworkID() (*big.Int, error)
@@ -95,4 +99,11 @@ func (c *Client) Nonce(addr string) (uint64, error) {
 }
 func (c *Client) GetPastLogs(query schema.LogQuery) (logs []*schema.Log, err error) {
 	return c.core.GetPastLogs(query)
+}
+
+func (c *Client) GetBlockByNumber(number uint64) (*schema.Block, error) {
+	return c.core.GetBlockByNumber(number)
+}
+func (c *Client) GetBlockByHash(hash string) (*schema.Block, error) {
+	return c.core.GetBlockByHash(hash)
 }

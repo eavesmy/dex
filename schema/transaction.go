@@ -28,4 +28,6 @@ type Transaction struct {
 	IsPending bool
 
 	CreatedAt time.Time
+
+	Logs []*Log
 }
