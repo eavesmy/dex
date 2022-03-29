@@ -6,25 +6,24 @@ import (
 	"github.com/eavesmy/dex/net"
 )
 
-var FANTOM_RPC_ADDR = "https://rpc.ftm.tools/"
+var MATIC_RPC_ADDR = "https://polygon-rpc.com"
 
-type Fantom struct {
+type Matic struct {
 	*Client
 	RpcAddr string
 }
 
-func (node *Fantom) Init(ctx context.Context, rpcAddrs ...string) (fantom Chain, err error) {
+func (node *Matic) Init(ctx context.Context, rpcAddrs ...string) (matic Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}
 
-	addr := FANTOM_RPC_ADDR
+	addr := MATIC_RPC_ADDR
 	if len(rpcAddrs) > 0 {
 		addr = rpcAddrs[0]
 	}
 
 	node.Client.core, err = new(net.Eth).Init(ctx, addr)
-	fmt.Println("Fantom core init.")
-	fantom = node
-	return
+	fmt.Println("Matic core init.")
+	return node, err
 }

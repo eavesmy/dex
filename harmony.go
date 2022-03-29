@@ -6,25 +6,24 @@ import (
 	"github.com/eavesmy/dex/net"
 )
 
-var FANTOM_RPC_ADDR = "https://rpc.ftm.tools/"
+var HARMONY_RPC_ADDR = "https://api.s0.t.hmny.io/"
 
-type Fantom struct {
+type Harmony struct {
 	*Client
 	RpcAddr string
 }
 
-func (node *Fantom) Init(ctx context.Context, rpcAddrs ...string) (fantom Chain, err error) {
+func (node *Harmony) Init(ctx context.Context, rpcAddrs ...string) (eth Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}
 
-	addr := FANTOM_RPC_ADDR
+	addr := HARMONY_RPC_ADDR
 	if len(rpcAddrs) > 0 {
 		addr = rpcAddrs[0]
 	}
 
 	node.Client.core, err = new(net.Eth).Init(ctx, addr)
-	fmt.Println("Fantom core init.")
-	fantom = node
-	return
+	fmt.Println("Harmony core init.")
+	return node, err
 }

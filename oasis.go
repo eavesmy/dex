@@ -12,11 +12,17 @@ type Oasis struct {
 	*Client
 }
 
-func (node *Oasis) Init(ctx context.Context) (oasis Chain, err error) {
+func (node *Oasis) Init(ctx context.Context, rpcAddrs ...string) (oasis Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}
-	node.Client.core, err = new(net.Eth).Init(ctx, OASIS_RPC_ADDR)
+
+	addr := OASIS_RPC_ADDR
+	if len(rpcAddrs) > 0 {
+		addr = rpcAddrs[0]
+	}
+
+	node.Client.core, err = new(net.Eth).Init(ctx, addr)
 	fmt.Println("Oasis core init.")
 	oasis = node
 	return

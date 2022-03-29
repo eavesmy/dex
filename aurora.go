@@ -13,7 +13,7 @@ type Aurora struct {
 	RpcAddr string
 }
 
-func (node *Aurora) Init(ctx context.Context) (aurora Chain, err error) {
+func (node *Aurora) Init(ctx context.Context, rpcAddrs ...string) (aurora Chain, err error) {
 
 	if AURORA_RPC_ADDR == "" {
 		panic("Variable 'AURORA_RPC_ADDR' required")
@@ -23,7 +23,12 @@ func (node *Aurora) Init(ctx context.Context) (aurora Chain, err error) {
 		ctx: ctx,
 	}
 
-	node.Client.core, err = new(net.Eth).Init(ctx, AURORA_RPC_ADDR)
+	addr := AURORA_RPC_ADDR
+	if len(rpcAddrs) > 0 {
+		addr = rpcAddrs[0]
+	}
+
+	node.Client.core, err = new(net.Eth).Init(ctx, addr)
 	fmt.Println("Eth core init.")
 	aurora = node
 	return aurora, err

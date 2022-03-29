@@ -13,12 +13,17 @@ type Moonbeam struct {
 	RpcAddr string
 }
 
-func (node *Moonbeam) Init(ctx context.Context) (moonbeam Chain, err error) {
+func (node *Moonbeam) Init(ctx context.Context, rpcAddrs ...string) (moonbeam Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}
 
-	node.Client.core, err = new(net.Eth).Init(ctx, MOONBEAM_RPC_ADDR)
+	addr := MOONBEAM_RPC_ADDR
+	if len(rpcAddrs) > 0 {
+		addr = rpcAddrs[0]
+	}
+
+	node.Client.core, err = new(net.Eth).Init(ctx, addr)
 	fmt.Println("Moonbeam core init.")
 	moonbeam = node
 	return

@@ -13,12 +13,17 @@ type Eth struct {
 	RpcAddr string
 }
 
-func (node *Eth) Init(ctx context.Context) (eth Chain, err error) {
+func (node *Eth) Init(ctx context.Context, rpcAddrs ...string) (eth Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}
 
-	node.Client.core, err = new(net.Eth).Init(ctx, ETH_RPC_ADDR)
+	addr := ETH_RPC_ADDR
+	if len(rpcAddrs) > 0 {
+		addr = rpcAddrs[0]
+	}
+
+	node.Client.core, err = new(net.Eth).Init(ctx, addr)
 	fmt.Println("Eth core init.")
 	eth = node
 	return eth, err

@@ -13,12 +13,17 @@ type Celo struct {
 	RpcAddr string
 }
 
-func (node *Celo) Init(ctx context.Context) (celo Chain, err error) {
+func (node *Celo) Init(ctx context.Context, rpcAddrs ...string) (celo Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}
 
-	node.Client.core, err = new(net.Eth).Init(ctx, CELO_RPC_ADDR)
+	addr := CELO_RPC_ADDR
+	if len(rpcAddrs) > 0 {
+		addr = rpcAddrs[0]
+	}
+
+	node.Client.core, err = new(net.Eth).Init(ctx, addr)
 	fmt.Println("Celo core init.")
 	celo = node
 	return

@@ -13,14 +13,19 @@ type Bsc struct {
 	RpcAddr string
 }
 
-func (node *Bsc) Init(ctx context.Context) (bsc Chain, err error) {
+func (node *Bsc) Init(ctx context.Context, rpcAddrs ...string) (bsc Chain, err error) {
 
 	node.Client = &Client{
 		ctx:  ctx,
 		node: node,
 	}
 
-	node.Client.core, err = new(net.Eth).Init(ctx, BSC_RPC_ADDR)
+	addr := BSC_RPC_ADDR
+	if len(rpcAddrs) > 0 {
+		addr = rpcAddrs[0]
+	}
+
+	node.Client.core, err = new(net.Eth).Init(ctx, addr)
 	fmt.Println("Bsc core init.")
 	bsc = node
 	return

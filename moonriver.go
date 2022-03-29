@@ -13,12 +13,17 @@ type Moonriver struct {
 	RpcAddr string
 }
 
-func (node *Moonriver) Init(ctx context.Context) (moonriver Chain, err error) {
+func (node *Moonriver) Init(ctx context.Context, rpcAddrs ...string) (moonriver Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}
 
-	node.Client.core, err = new(net.Eth).Init(ctx, MOONRIVER_RPC_ADDR)
+	addr := MOONRIVER_RPC_ADDR
+	if len(rpcAddrs) > 0 {
+		addr = rpcAddrs[0]
+	}
+
+	node.Client.core, err = new(net.Eth).Init(ctx, addr)
 	fmt.Println("Moonriver core init.")
 	moonriver = node
 	return

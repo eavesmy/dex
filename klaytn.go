@@ -13,12 +13,17 @@ type Klaytn struct {
 	RpcAddr string
 }
 
-func (node *Klaytn) Init(ctx context.Context) (klaytn Chain, err error) {
+func (node *Klaytn) Init(ctx context.Context, rpcAddrs ...string) (klaytn Chain, err error) {
 	node.Client = &Client{
 		ctx: ctx,
 	}
 
-	node.Client.core, err = new(net.Eth).Init(ctx, KLAYTN_RPC_ADDR)
+	addr := KLAYTN_RPC_ADDR
+	if len(rpcAddrs) > 0 {
+		addr = rpcAddrs[0]
+	}
+
+	node.Client.core, err = new(net.Eth).Init(ctx, addr)
 	fmt.Println("Klaytn core init.")
 	klaytn = node
 	return

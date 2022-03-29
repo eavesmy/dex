@@ -13,7 +13,7 @@ type TransferOption struct {
 
 // Chain is implement by Client
 type Chain interface {
-	Init(context.Context) (Chain, error)
+	Init(context.Context, ...string) (Chain, error)
 	WalletCreate() (*schema.Wallet, error)
 	BlockNumber() (uint64, error)
 	GetBalance(string) (*big.Int, error)
