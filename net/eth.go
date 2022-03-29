@@ -14,6 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"golang.org/x/crypto/sha3"
 	"math/big"
+	"sync"
 	"time"
 )
 
@@ -133,8 +134,70 @@ func (e *Eth) NetworkID() (chainID *big.Int, err error) {
 	return
 }
 
-func (e *Eth) GetPastLogs() {
-	// e.client.FilterLogs()
+// GetPastLogs not implemented
+func (e *Eth) GetPastLogs(query schema.LogQuery) (logs []*schema.Log, err error) {
+	ls, err := e.client.FilterLogs(e.Ctx, e.logQuery2FilterQuery(query))
+	if err != nil {
+		err = enums.RequestFailed
+		return
+	}
+
+	logs = make([]*schema.Log, len(ls))
+	for _, item := range ls {
+
+		topics := make([]string, len(item.Topics))
+		for _, topic := range item.Topics {
+			topics = append(topics, topic.Hex())
+		}
+		logs = append(logs, &schema.Log{
+			Address:     item.Address.Hex(),
+			Topics:      topics,
+			Data:        item.Data,
+			Index:       item.Index,
+			BlockNumber: item.BlockNumber,
+			BlockHash:   item.BlockHash.Hex(),
+			TxHash:      item.TxHash.Hex(),
+			TxIndex:     item.TxIndex,
+			Removed:     item.Removed,
+		})
+	}
+	return
+}
+
+func (e *Eth) logQuery2FilterQuery(query schema.LogQuery) ethereum.FilterQuery {
+	var blockHash common.Hash
+	var fromBlock *big.Int
+	var toBlock *big.Int
+	var addresss []common.Address
+	var topics [][]common.Hash
+
+	if query.BlockHash != "" {
+		blockHash = common.HexToHash(query.BlockHash)
+	}
+	if query.FromBlock != 0 {
+		fromBlock = new(big.Int).SetUint64(query.FromBlock)
+	}
+	if query.ToBlock != 0 {
+		toBlock = new(big.Int).SetUint64(query.ToBlock)
+	}
+	if len(query.Addresses) > 0 {
+		addresss = []common.Address{}
+		for _, addr := range query.Addresses {
+			addresss = append(addresss, common.HexToAddress(addr))
+		}
+	}
+
+	if len(query.Topics) > 0 {
+
+	}
+
+	return ethereum.FilterQuery{
+		BlockHash: &blockHash,
+		FromBlock: fromBlock,
+		ToBlock:   toBlock,
+		Addresses: addresss,
+		Topics:    topics,
+	}
 }
 
 func (e *Eth) GetTransaction(txHash string) (transaction *schema.Transaction, err error) {
@@ -143,18 +206,38 @@ func (e *Eth) GetTransaction(txHash string) (transaction *schema.Transaction, er
 
 	tx, isPending, err := e.client.TransactionByHash(e.Ctx, hash)
 
-	transaction = &schema.Transaction{
-		Hash:    tx.Hash().String(),
-		ChainId: tx.ChainId(),
-		To:      tx.To().String(),
-		// Gas:       tx.Gas(),
-		Gas:       tx.Gas(),
-		GasPrice:  tx.GasPrice(),
-		Cost:      tx.Cost(),
-		Data:      tx.Data(),
-		Nonce:     tx.Nonce(),
-		IsPending: isPending,
+	transaction = e.Transaction2Schema(tx, isPending)
+
+	return
+}
+
+func (e *Eth) GetTransactionFromBlock(blockHash string) (txs []*schema.Transaction, err error) {
+
+	count, err := e.GetTransactionCount(blockHash)
+
+	if err != nil {
+		return
 	}
+
+	hash := common.HexToHash(blockHash)
+
+	txs = []*schema.Transaction{}
+
+	lock := sync.WaitGroup{}
+
+	for i := 0; i < count; i++ {
+		go func(count int) {
+			lock.Add(1)
+			tx, err := e.client.TransactionInBlock(e.Ctx, hash, 1)
+			if err != nil {
+				return
+			}
+			txs = append(txs, e.Transaction2Schema(tx))
+			lock.Done()
+		}(count)
+	}
+
+	lock.Wait()
 
 	return
 }
@@ -294,4 +377,22 @@ func (e *Eth) SendTransaction(transaction *schema.Transaction, privateKey string
 	transaction.CreatedAt = time.Now()
 
 	return transaction, e.client.SendTransaction(e.Ctx, signedTx)
+}
+
+func (e *Eth) Transaction2Schema(tx *types.Transaction, isPendings ...bool) *schema.Transaction {
+	var isPending bool
+	if len(isPendings) > 0 {
+		isPending = isPendings[0]
+	}
+	return &schema.Transaction{
+		Hash:      tx.Hash().Hex(),
+		ChainId:   tx.ChainId(),
+		To:        tx.To().Hex(),
+		Gas:       tx.Gas(),
+		GasPrice:  tx.GasPrice(),
+		Cost:      tx.Cost(),
+		Data:      tx.Data(),
+		Nonce:     tx.Nonce(),
+		IsPending: isPending,
+	}
 }

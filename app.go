@@ -15,16 +15,20 @@ type Chain interface {
 	WalletCreate() (*schema.Wallet, error)
 	BlockNumber() (uint64, error)
 	GetBalance(string) (*big.Int, error)
+	// GetBalanceOf Query token balance.
 	GetBalanceOf(string, string) (*big.Int, error)
 	NetworkID() (*big.Int, error)
 	Nonce(string) (uint64, error)
 	GetTransaction(string) (*schema.Transaction, error)
+	GetPastLogs(schema.LogQuery) ([]*schema.Log, error)
+	// Call is call contract method.
+	// ex.: `Call(contractAddr,"Transfer(address,address)",...params)`
 	Call(string, string, ...interface{}) map[string]interface{}
 	SetPrivateKey(string) Chain
 	SendTransaction(*schema.Transaction) (*schema.Transaction, error)
 }
 
-// SetPrivateKey is implement by net.Eth
+// SetPrivateKey is implement by net.Eth or other chain net.
 type ChainNet interface {
 	WalletCreate() (*schema.Wallet, error)
 	BlockNumber() (uint64, error)
@@ -33,6 +37,7 @@ type ChainNet interface {
 	NetworkID() (*big.Int, error)
 	Nonce(string) (uint64, error)
 	GetTransaction(string) (*schema.Transaction, error)
+	GetPastLogs(schema.LogQuery) ([]*schema.Log, error)
 	Call(string, string, ...interface{}) map[string]interface{}
 	SendTransaction(*schema.Transaction, string) (*schema.Transaction, error)
 }
@@ -85,4 +90,7 @@ func (c *Client) Call(to string, method string, params ...interface{}) map[strin
 
 func (c *Client) Nonce(addr string) (uint64, error) {
 	return c.core.Nonce(addr)
+}
+func (c *Client) GetPastLogs(query schema.LogQuery) (logs []*schema.Log, err error) {
+	return c.core.GetPastLogs(query)
 }

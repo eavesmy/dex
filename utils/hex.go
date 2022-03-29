@@ -1,5 +1,7 @@
 package utils
 
+import "golang.org/x/crypto/sha3"
+
 func LeftPadding(b []byte, length int) []byte {
 	i := len(b)
 	for ; i < length; i++ {
@@ -16,4 +18,10 @@ func SplitBytes(b []byte, length int) [][]byte {
 		ret = append(ret, b[i:i+64])
 	}
 	return ret
+}
+
+func ShaMethod(method string) []byte {
+	hash := sha3.NewLegacyKeccak256()
+	hash.Write([]byte(method))
+	return hash.Sum(nil)[:4]
 }

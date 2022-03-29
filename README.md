@@ -1,24 +1,30 @@
 # Dex interface
 
 ## Support chain
-- [ ] Eth
+- [x] Eth
 - [ ] Btc
-- [ ] Bsc
+- [x] Bsc
 - [ ] Near
 - [ ] One
-- [ ] Matic
-- [ ] Oasis
+- [x] Matic
+- [x] Oasis
+- [x] Aurora
+- [x] Celo
+- [x] Fantom
+- [x] Moonbeam
+- [x] MoonRiver
+- [x] Oasis
 
 ## Support method
 - [x] Balance
 - [x] BalanceOf
 - [x] NetworkID
+- [x] GetTransaction
+- [x] GetTransactionCount
+- [x] GetGasPrice
+- [x] Transfer
+- [x] Call
 - [ ] Sign
-- [ ] GetTransaction
-- [ ] GetTransactionCount
 - [ ] GetTransactionFromBlock
 - [ ] GetTransactionReceipt
 - [ ] GetPastLogs
-- [ ] GetGasPrice
-- [ ] Transfer
-- [ ] Call // call contract method
