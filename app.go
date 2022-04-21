@@ -25,9 +25,8 @@ type Chain interface {
 	Nonce(string) (uint64, error)
 	GetTransaction(string) (*schema.Transaction, error)
 	GetPastLogs(schema.LogQuery) ([]*schema.Log, error)
-	// Call is call contract method.
-	// ex.: `Call(contractAddr,"Transfer(address,address)",...params)`
-	Call(string, string, ...interface{}) map[string]interface{}
+	// Call is call contract method.  ex.: `Call(contractAddr,"Transfer(address,address)",...params)`
+	Call(string, string, ...interface{}) ([]byte, error)
 	SetPrivateKey(string) Chain
 	SendTransaction(*schema.Transaction) (*schema.Transaction, error)
 }
@@ -44,7 +43,7 @@ type ChainNet interface {
 	Nonce(string) (uint64, error)
 	GetTransaction(string) (*schema.Transaction, error)
 	GetPastLogs(schema.LogQuery) ([]*schema.Log, error)
-	Call(string, string, ...interface{}) map[string]interface{}
+	Call(string, string, ...interface{}) ([]byte, error)
 	SendTransaction(*schema.Transaction, string) (*schema.Transaction, error)
 }
 
@@ -90,7 +89,7 @@ func (c *Client) SendTransaction(transaction *schema.Transaction) (*schema.Trans
 }
 
 // Call is call contract method.
-func (c *Client) Call(to string, method string, params ...interface{}) map[string]interface{} {
+func (c *Client) Call(to string, method string, params ...interface{}) ([]byte, error) {
 	return c.core.Call(to, method, params)
 }
 

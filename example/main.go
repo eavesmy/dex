@@ -25,6 +25,10 @@ func main() {
 	blockNumber, err := c.BlockNumber()
 	fmt.Printf("cronos height: %d\n", blockNumber)
 
+	c, _ = new(dex.Oasis).Init(ctx)
+	name, err := c.Call("0x6cb9750a92643382e020ea9a170abb83df05f30b", "name()")
+	fmt.Println("token name", string(name))
+
 	dex.HARMONY_RPC_ADDR = "wss://ws.s0.t.hmny.io"
 	c, _ = new(dex.Harmony).Init(ctx)
 
