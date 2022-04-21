@@ -3,6 +3,7 @@ package dex
 import (
 	"context"
 	"fmt"
+
 	"github.com/eavesmy/dex/net"
 )
 
@@ -25,7 +26,7 @@ func (node *Aurora) Init(ctx context.Context, rpcAddrs ...string) (aurora Chain,
 	}
 
 	node.Client.core, err = new(net.Eth).Init(ctx, addr)
-	fmt.Println("Eth core init.")
+	fmt.Println("Aurora core init.")
 	aurora = node
 	return aurora, err
 }
