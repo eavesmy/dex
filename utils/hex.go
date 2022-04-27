@@ -14,8 +14,8 @@ func LeftPadding(b []byte, length int) []byte {
 
 func SplitBytes(b []byte, length int) [][]byte {
 	ret := [][]byte{}
-	for i := 0; i < length; i += 64 {
-		ret = append(ret, b[i:i+64])
+	for i := 0; i < len(b); i += length {
+		ret = append(ret, b[i:i+length])
 	}
 	return ret
 }

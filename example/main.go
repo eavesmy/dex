@@ -21,26 +21,32 @@ func main() {
 	// Of course you can set ws/wss protocal here.
 	// dex.BSC_RPC_ADDR = "https://bsc-dataseed2.binance.org/"
 
-	c, _ = new(dex.Cronos).Init(ctx)
-	blockNumber, err := c.BlockNumber()
-	fmt.Printf("cronos height: %d\n", blockNumber)
+	/*
+		c, _ = new(dex.Oasis).Init(ctx)
+		// ret, err := c.Call("0xE9b38eD157429483EbF87Cf6C002cecA5fd66783", "name()")
 
-	c, _ = new(dex.Oasis).Init(ctx)
-	name, err := c.Call("0x6cb9750a92643382e020ea9a170abb83df05f30b", "name()")
-	fmt.Println("token name", string(name))
+		c, _ = new(dex.Cronos).Init(ctx)
+		blockNumber, err := c.BlockNumber()
+		fmt.Printf("cronos height: %d\n", blockNumber)
 
-	dex.HARMONY_RPC_ADDR = "wss://ws.s0.t.hmny.io"
-	c, _ = new(dex.Harmony).Init(ctx)
+		dex.HARMONY_RPC_ADDR = "wss://ws.s0.t.hmny.io"
+		c, _ = new(dex.Harmony).Init(ctx)
 
-	blockNumber, err = c.BlockNumber()
-	fmt.Printf("harmony height: %d\n", blockNumber)
+		blockNumber, err = c.BlockNumber()
+		fmt.Printf("harmony height: %d\n", blockNumber)
+	*/
+
+	dex.ETH_RPC_ADDR = "http://3.113.15.70:8545"
+	c, _ = new(dex.Eth).Init(ctx)
+	block, err := c.GetBlockByNumber(0)
+	fmt.Println(block.Hash, err)
 
 	c, _ = new(dex.Aurora).Init(ctx)
 
 	num, _ := c.BlockNumber()
 	fmt.Println("lastest block number: ", num)
 
-	block, err := c.GetBlockByNumber(num)
+	block, err = c.GetBlockByNumber(num)
 	fmt.Println("block err: ", block, err)
 
 	block, err = c.GetBlockByNumber(63060094)
