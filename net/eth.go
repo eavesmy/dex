@@ -411,7 +411,8 @@ func (e *Eth) Transaction2Schema(tx *types.Transaction, isPendings ...bool) *sch
 	if tx.To() != nil {
 		to = tx.To().Hex()
 	}
-	return &schema.Transaction{
+
+	txSchema := &schema.Transaction{
 		Hash:      tx.Hash().Hex(),
 		ChainId:   tx.ChainId(),
 		To:        to,
@@ -422,10 +423,17 @@ func (e *Eth) Transaction2Schema(tx *types.Transaction, isPendings ...bool) *sch
 		Nonce:     tx.Nonce(),
 		IsPending: isPending,
 	}
+
+	if msg, err := tx.AsMessage(types.LatestSignerForChainID(tx.ChainId()), tx.GasPrice()); err == nil {
+		txSchema.From = msg.From().Hex()
+	}
+
+	return txSchema
 }
 
 func (e *Eth) Block2Schema(block *types.Block) *schema.Block {
 	txs := make([]*schema.Transaction, len(block.Transactions()))
+
 	for i, tx := range block.Transactions() {
 		txs[i] = e.Transaction2Schema(tx)
 	}

@@ -40,12 +40,15 @@ func main() {
 	blockNumber, err := c.BlockNumber()
 	fmt.Println(blockNumber, err)
 
+	block, err := c.GetBlockByNumber(blockNumber)
+	fmt.Println("block", block.Transactions[0].From)
+
 	c, _ = new(dex.Aurora).Init(ctx)
 
 	num, _ := c.BlockNumber()
 	fmt.Println("lastest block number: ", num)
 
-	block, err := c.GetBlockByNumber(num)
+	block, err = c.GetBlockByNumber(num)
 	fmt.Println("block err: ", block, err)
 
 	block, err = c.GetBlockByNumber(63060094)
