@@ -36,17 +36,16 @@ func main() {
 		fmt.Printf("harmony height: %d\n", blockNumber)
 	*/
 
-	dex.ETH_RPC_ADDR = "http://3.113.15.70:8545"
-	c, _ = new(dex.Eth).Init(ctx)
-	block, err := c.GetBlockByNumber(0)
-	fmt.Println(block.Hash, err)
+	c, _ = new(dex.Iotex).Init(ctx)
+	blockNumber, err := c.BlockNumber()
+	fmt.Println(blockNumber, err)
 
 	c, _ = new(dex.Aurora).Init(ctx)
 
 	num, _ := c.BlockNumber()
 	fmt.Println("lastest block number: ", num)
 
-	block, err = c.GetBlockByNumber(num)
+	block, err := c.GetBlockByNumber(num)
 	fmt.Println("block err: ", block, err)
 
 	block, err = c.GetBlockByNumber(63060094)
