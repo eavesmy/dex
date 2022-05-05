@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"math/big"
 
 	"github.com/eavesmy/dex"
 	"github.com/eavesmy/dex/schema"
+	"github.com/eavesmy/dex/utils"
 )
 
 func main() {
@@ -35,6 +37,12 @@ func main() {
 		blockNumber, err = c.BlockNumber()
 		fmt.Printf("harmony height: %d\n", blockNumber)
 	*/
+
+	length := utils.UnitToPow("tether")
+	fmt.Println("tether: ", length)
+
+	amount := new(big.Float).SetFloat64(1238127391)
+	fmt.Println("current amount: ", utils.AmountByDecimal(amount, utils.UnitToPow("ether")).String())
 
 	c, _ = new(dex.Iotex).Init(ctx)
 	blockNumber, err := c.BlockNumber()
