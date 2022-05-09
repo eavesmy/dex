@@ -19,7 +19,7 @@ func (node *Iotex) Init(ctx context.Context, rpcAddrs ...string) (eth Chain, err
 		ctx: ctx,
 	}
 
-	addr := ETH_RPC_ADDR
+	addr := IOTEX_RPC_ADDR
 	if len(rpcAddrs) > 0 {
 		addr = rpcAddrs[0]
 	}
